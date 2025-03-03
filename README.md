@@ -81,7 +81,7 @@ python run_script.py
 
 
 
- ![rag_workflow](.\rag_workflow.png)
+ ![rag_workflow](./rag_workflow.png)
 
 流程图中的橙色节点代表调用LLM的API。运行模型后你可以在 `run.log` 中查看包含对话历史的相关日志。
 
