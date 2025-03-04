@@ -6,7 +6,7 @@ collections
 typing
 dotenv
 os
-torch
+torch   # Prefer using the GPU version
 datetime
 pathlib
 json
