@@ -7,6 +7,7 @@ from workflow.loader import LawLoader
 from workflow.start_es import es
 from workflow.save import save_as_json
 from workflow.utils import bulk_import
+from workflow.models import get_embedding
 
 # 加载所有md数据
 path_data = "data_book"
@@ -18,14 +19,6 @@ print(f"Loaded {len(documents)} documents")
 splitter = LawSplitter(chunk_size=200, chunk_overlap=30)
 split_documents_mk = splitter.split_documents(documents)
 print(f"Split into {len(split_documents_mk)} smaller documents")
-
-# 加载本地bge
-bge_model_path = 'F://大模型实例//深度项目学习与搭建//项目第一部分//bge-large-zh-v1.5'
-BGEmodel = SentenceTransformer(bge_model_path)
-
-# 计算文本向量并显示进度
-def get_embedding(text):
-    return BGEmodel.encode(text, normalize_embeddings=True)  # 归一化
 
 for doc in tqdm(split_documents_mk, desc="计算向量中", unit="doc"):    
     doc.metadata["para_vector"] = get_embedding(doc.page_content) # 计算段落内容向量
