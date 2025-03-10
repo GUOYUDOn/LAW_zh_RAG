@@ -18,7 +18,7 @@ def run_workflow(user_input: str,
                  conversation_id: Optional[str] = None,
                  top_k_es: int = 20,
                  top_k_web: int = 2,
-                 top_k_rerank: int = 5) -> Generator[str, None, None]:
+                 top_k_rerank: int = 4) -> Generator[str, None, None]:
     """完整的工作流实现"""
     
     if conversation_manager is None: 
@@ -77,7 +77,7 @@ def run_workflow(user_input: str,
     
     
     
-def retrieve_and_merge(query_text: str, top_k_es: int = 20, top_k_web: int = 2, top_k_rerank: int = 5) -> str:
+def retrieve_and_merge(query_text: str, top_k_es: int = 20, top_k_web: int = 2, top_k_rerank: int = 4) -> str:
     """ES检索 + 网络检索 + 交叉编码器重排 -> 合并文本"""
     
     query_vector = get_embedding(query_text)
@@ -86,7 +86,7 @@ def retrieve_and_merge(query_text: str, top_k_es: int = 20, top_k_web: int = 2, 
 
     search_api = DuckDuckGoSearchAPIWrapper()
     web_retriever = WebRetriever(search_api, num_search_results=top_k_web)
-    web_docs = web_retriever.invoke(query_text)
+    web_docs = web_retriever.invoke(query_text)  
 
     docs_all = es_docs + web_docs
     sorted_docs = rerank_documents(query_text, docs_all, rerank_model=get_rerank())

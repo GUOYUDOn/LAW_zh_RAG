@@ -1,3 +1,5 @@
+print("Starting to load the local model...")
+
 from dotenv import load_dotenv
 import os
 import torch
@@ -9,13 +11,16 @@ from langchain_core.messages import HumanMessage
 # print("Starting to load the local model...")
 
 device = "cuda" if torch.cuda.is_available() else "cpu"
+print(f"Using device: {device}")
 
-embedding_model_path = 'to//your//path'
+embedding_model_path = 'F://大模型实例//from scratch项目//核心项目//bge-large-zh-v1.5'
 BGE_embedding_model = SentenceTransformer(embedding_model_path, device=device)
-reranker_model_path = 'to//your//path'
+reranker_model_path = 'F://大模型实例//from scratch项目//核心项目//bge-reranker-v2-m3'
 BGE_reranker_model = CrossEncoder(reranker_model_path, device=device)
 
-# print("Local model loaded successfully.")
+print("Local model loaded successfully.")
+
+
 
 def get_model(
         size: str = "medium",  # 可选: "large", "medium", "small"
@@ -37,9 +42,9 @@ def get_model(
             "small": "deepseek-chat"
         },
         "qwen": {
-            "large": "qwen2.5-72b-instruct",
-            "medium": "qwen2.5-32b-instruct",
-            "small": "qwen2.5-7b-instruct"
+            "large": "qwen2.5-7b-instruct",
+            "medium": "qwen2.5-3b-instruct",
+            "small": "qwen2.5-1.5b-instruct"
         }
     }
 
@@ -83,6 +88,20 @@ def get_embedding(query_text : str):
 
 def get_rerank():
     return BGE_reranker_model
+
+def get_eval_model(streaming: bool = True, callbacks=None) -> ChatOpenAI:
+    load_dotenv()
+    qwen_api_key = os.getenv("QWEN_API_KEY")
+    qwen_api_base = "https://dashscope.aliyuncs.com/compatible-mode/v1"
+    
+    return ChatOpenAI(
+        model="qwen2.5-72b-instruct",
+        openai_api_key=qwen_api_key,
+        openai_api_base=qwen_api_base,
+        streaming=streaming,
+        callbacks=callbacks
+    )    
+
 
 def test_api(provider, size):   
     try:

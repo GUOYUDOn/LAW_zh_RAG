@@ -1,4 +1,4 @@
-# 🤖LAW_zh_RAG： 搭建专属中文法律大模型助手
+# 🤖LAW_zh_RAG： 从零开始搭建中文法律大模型助手
 
 ## 📌 项目简介
 
@@ -84,6 +84,17 @@ python run_script.py
  ![rag_workflow](./rag_workflow.png)
 
 流程图中的橙色节点代表调用LLM的API。运行模型后你可以在 `run.log` 中查看包含对话历史的相关日志。
+
+## 🎯6. EVAL
+
+可以运行`eval`文件夹下的`run_eval.py`进行评估，当前支持的评估方式有
+
+- 本地es检索的**命中率**与**精确率**；
+- **baseline**与**RAG**的端到端精确率。
+
+注意：由于DuckDuckGo的API限制，关于**RAG**的测试部分仅包含本地es检索，不含网络检索部分！
+
+检索结果将以`json`和`csv`格式存储，可进行后续检查。
 
 
 

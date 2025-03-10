@@ -43,7 +43,7 @@ def es_search(es, query_vector, index_name="law_data", top_k=20):
 
 
 class WebRetriever(BaseRetriever):
-    """实现网络检索并分块"""
+    """实现网络检索并分块，使用封装好的默认方法invoke"""
 
     search: DuckDuckGoSearchAPIWrapper = Field(..., description="DuckDuckGo Search API Wrapper")
     num_search_results: int = Field(3, description="Number of search results to retrieve.")
@@ -76,7 +76,7 @@ class WebRetriever(BaseRetriever):
 
         return self.text_splitter.split_documents(docs)
 
-    def _get_relevant_documents(self, query: str, *, run_manager: Optional[CallbackManagerForRetrieverRun] = None) -> List[Document]:
+    def get_relevant_documents(self, query: str, *, run_manager: Optional[CallbackManagerForRetrieverRun] = None) -> List[Document]:
         """实现 BaseRetriever 的抽象方法，使其可以被实例化"""
         return self._get_web_documents(query)
     
@@ -173,7 +173,7 @@ def merge_documents(docs: List[Document], top_k: int = 10):
 #     retriever = WebRetriever(search_api, num_search_results=3)
 
 #     query = "劳动合同终止后公司是否需支付经济补偿金？劳动合同,终止,经济补偿金"
-#     documents = retriever._get_web_documents(query)
+#     documents = retriever.get_relevant_documents(query)
 
 #     for i, doc in enumerate(documents):
 #         print(f"Result {i+1}:")
