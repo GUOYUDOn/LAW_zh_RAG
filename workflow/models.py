@@ -7,15 +7,17 @@ from datetime import datetime
 from langchain_openai import ChatOpenAI
 from sentence_transformers import SentenceTransformer, CrossEncoder
 from langchain_core.messages import HumanMessage
+from typing import List, Optional
+import requests
 
 # print("Starting to load the local model...")
 
 device = "cuda" if torch.cuda.is_available() else "cpu"
 print(f"Using device: {device}")
 
-embedding_model_path = 'F://大模型实例//from scratch项目//核心项目//bge-large-zh-v1.5'
+embedding_model_path = 'to//your//path'
 BGE_embedding_model = SentenceTransformer(embedding_model_path, device=device)
-reranker_model_path = 'F://大模型实例//from scratch项目//核心项目//bge-reranker-v2-m3'
+reranker_model_path = 'to//your//path'
 BGE_reranker_model = CrossEncoder(reranker_model_path, device=device)
 
 print("Local model loaded successfully.")
@@ -102,6 +104,18 @@ def get_eval_model(streaming: bool = True, callbacks=None) -> ChatOpenAI:
         callbacks=callbacks
     )    
 
+def get_finetune_model(streaming: bool = False, callbacks=None) -> ChatOpenAI:
+    """
+    调用远程服务器的模型，注意：模型的名称"gpt-3.5-turbo"是FastAPI返回的默认值，不代表最终微调后的模型！
+    """
+    return ChatOpenAI(
+        openai_api_base="http://81.227.174.164:40080/v1",  # example
+        openai_api_key="EMPTY",  
+        model="gpt-3.5-turbo",
+        streaming=streaming,
+        callbacks=callbacks,
+        temperature=0.7
+    )
 
 def test_api(provider, size):   
     try:

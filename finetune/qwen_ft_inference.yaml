@@ -1,0 +1,6 @@
+model_name_or_path: /workspace/Qwen2.5-7B-finetune
+template: qwen
+infer_backend: vllm  # choices: [huggingface, vllm]
+trust_remote_code: true
+
+# FORCE_TORCHRUN=1 llamafactory-cli chat qwen_ft_inference.yaml

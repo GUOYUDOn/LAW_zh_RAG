@@ -3,8 +3,8 @@ import csv
 import json
 from tqdm import tqdm
 
-from eval import load_random_questions, load_random_questions_with_answers, eval_chain, get_retriever_results, get_eval, single_turn_generation
-from workflow.generation import eval_end2end_accuracy, generate_baseline_response
+from eval import load_random_questions, load_random_questions_with_answers, eval_chain, get_retriever_results, get_eval, single_turn_generation, single_turn_generation_finetune
+from generation import eval_end2end_accuracy, generate_baseline_response, generate_baseline_response_without_RAG
 
 def eval1(question_file_path: str = "data_book//3-8.json",
           question_nums: int = 100,
@@ -129,6 +129,42 @@ def eval3(question_file_path: str = "data_book//3-8.json",
     return eval_result, global_accuracy 
 
 
+
+def eval4(question_file_path: str = "data_book//3-8.json",
+          question_nums: int = 100,
+          is_store: bool = True,
+          output_file_path: str = "data_book//eval_end2end_finetune.json"):
+    '''
+    测评微调后模型的准确率，不使用RAG。
+    '''
+    pairs_qa = load_random_questions_with_answers(question_file_path, question_nums, seed = 56)
+    print(f"Loaded {len(pairs_qa)} question-answer pairs.")
+
+    print("Starting evaluation...")
+    eval_result = []
+    for pair_qa in tqdm(pairs_qa):
+        question = pair_qa["question"]
+        answer = pair_qa["answer"]
+        # response = generate_baseline_response_without_RAG(question)
+        response = single_turn_generation_finetune(question)
+        score = eval_end2end_accuracy(question, answer, response)
+        eval_result.append({"question": question, 
+                            "answer": answer, 
+                            "response": response, 
+                            "score": score})
+    
+    
+    global_accuracy = sum([item["score"] for item in eval_result]) / len(eval_result)
+    print("(End to End Mode) Global Accuracy Score:", global_accuracy)
+    
+    if is_store:
+        with open(output_file_path, "w", encoding="utf-8") as f:
+            json.dump(eval_result, f, ensure_ascii=False, indent=4)
+        print(f"Evaluation results saved to {output_file_path}")
+
+    return eval_result, global_accuracy  
+
+
 # if __name__ == "__main__":
     # eval1(question_nums = 300, top_k_rerank = 4)   # 单轮对话检索能力测评
     
@@ -137,3 +173,6 @@ def eval3(question_file_path: str = "data_book//3-8.json",
 
 # if __name__ == "__main__":
 #     eval3(question_nums = 100)
+
+# if __name__ == "__main__":
+#     eval4(question_nums = 100, is_store = True, output_file_path = "data_book//eval_end2end-0.5b.json")

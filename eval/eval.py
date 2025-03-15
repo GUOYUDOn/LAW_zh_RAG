@@ -1,8 +1,8 @@
-from workflow.retriever import es_search, convert_es_to_documents, rerank_documents, WebRetriever, merge_documents
-from workflow.generation import formalize_question, eval_single_question, identify_intent, generate_response_without_stream
-from workflow.models import get_embedding, get_rerank
-from workflow.start_es import es
-from workflow.chain import REFUSED_RESPONSE, retrieve_and_merge
+from retriever import es_search, convert_es_to_documents, rerank_documents, WebRetriever, merge_documents
+from generation import formalize_question, eval_single_question, identify_intent, generate_response_without_stream, generate_response_finetune
+from models import get_embedding, get_rerank
+from start_es import es
+from chain import REFUSED_RESPONSE, retrieve_and_merge
 
 import json
 import random
@@ -150,6 +150,17 @@ def single_turn_generation(question: str, top_k_es: int = 20, top_k_web: int = 2
         reponse = generate_response_without_stream(enhenced_question, refer_text)
     return reponse
 
+
+def single_turn_generation_finetune(question: str, top_k_es: int = 20, top_k_web: int = 2, top_k_rerank: int = 5):
+    '''简易单轮对话工作流，使用自己微调后的模型，非流式输出结果'''
+    if not identify_intent(question):
+        return REFUSED_RESPONSE
+    else:
+        enhenced_question = formalize_question(question)
+        refer_text = get_single_retriever_results(enhenced_question, top_k_es, top_k_web, top_k_rerank)  # 无网络检索
+        # refer_text = retrieve_and_merge(enhenced_question, top_k_es, top_k_web, top_k_rerank)
+        reponse = generate_response_finetune(enhenced_question, refer_text)
+    return reponse
 
 
 

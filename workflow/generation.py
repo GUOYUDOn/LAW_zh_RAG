@@ -3,7 +3,7 @@ from langchain_core.messages import HumanMessage
 from langchain.output_parsers import BooleanOutputParser
 from langchain.callbacks.base import BaseCallbackHandler
 
-from models import get_model, get_eval_model
+from models import get_model, get_eval_model, get_finetune_model
 from prompt import CHECK_LAW_PROMPT, CHECK_RELEVANCE_PROMPT, ENHANCE_QUESTION_PROMPT, FORMALIZE_QUESTION_PROMPT, GENERATION_PROMPT
 from prompt import BASELINE_GENERATION_PROMPT, EVAL_SINGLE_PROMPT, EVAL_END2END_PROMPT, EVAL_ACCURACY_END2END_PROMPT
 
@@ -115,7 +115,7 @@ def generate_baseline_response(query_text: str):
 
 def eval_end2end(query_text: str, response1: str, response2: str):
     """
-    端到端评估基线模型与RAG模型结果
+    端到端评估基线模型与RAG模型结果（打分，暂时弃用）
     """
     model_eval = get_eval_model(streaming=False)
     prompt = EVAL_END2END_PROMPT.format(query_text=query_text, response1=response1, response2=response2)
@@ -132,6 +132,26 @@ def eval_end2end_accuracy(query_text: str, answer_text: str, response: str):
     response = model_eval.invoke([HumanMessage(content=prompt)]).content
     parser = BooleanOutputParser()
     return parser.parse(response)
+
+
+def generate_response_finetune(query_text: str, refer_text: str):
+    """
+    使用远程服务器微调后的模型，非流式输出生成最终回答。
+    """
+    prompt = GENERATION_PROMPT.format(query_text=query_text, refer_text=refer_text)
+    model_generate = get_finetune_model()
+    response = model_generate.invoke([HumanMessage(content=prompt)]).content
+    return response
+
+
+def generate_baseline_response_without_RAG(query_text: str):
+    """
+    使用远程服务器微调后的模型，非流式输出生成最终回答，不使用RAG。
+    """
+    model_generate = get_finetune_model()
+    prompt = BASELINE_GENERATION_PROMPT.format(query_text=query_text)
+    response = model_generate.invoke([HumanMessage(content=prompt)]).content
+    return response
 
 # if __name__ == "__main__":
 #     print(identify_intent("今天天气怎么样"))
