@@ -95,7 +95,7 @@ python run_script.py
 可以运行 `eval` 文件夹下的 `run_eval.py` 进行评估，当前支持的评估方式有
 
 - 本地es检索的 **命中率** 与 **精确率**；
-- **baseline**、**finetune **以及 **RAG** 的端到端精确率。
+- **baseline**、**finetune** 以及 **RAG** 的端到端精确率。
 
 注意：由于 DuckDuckGo 的 API 限制，关于 **RAG** 的测试部分仅包含本地es检索，不含网络检索部分！
 
