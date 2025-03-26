@@ -86,9 +86,9 @@ python run_script.py
 
 ## 📝 5. 模型微调
 
-模型微调使用的框架是 **LLaMA-Factory**，对 `Qwen2.5-0.5B-Instruct` 和 `Qwen2.5-7B-Instruct` 进行全参微调，使用 **vllm** 作为推理框架，并使用 **FastAPI** 部署模型。
+模型微调使用的框架是 **LLaMA-Factory**，对 `Qwen2.5-0.5B-Instruct` 和 `Qwen2.5-7B-Instruct` 进行 `LoRA` 微调，使用 **vllm** 作为推理框架，并使用 **FastAPI** 部署模型。对于 7B 的模型，在 SFT 之后还进行了 DPO，进一步与人类偏好对齐。
 
-`finetune`文件夹下包含数据处理脚本、最终训练数据以及训练参数脚本，请按需进行修改。
+`finetune`文件夹下包含部分数据处理脚本、最终训练数据以及训练参数脚本，请按需进行修改。
 
 ## 🎯6. EVAL
 
@@ -111,7 +111,7 @@ python run_script.py
 | 基础模型/对照实验 | baseline | baseline+RAG | finetune | finetune+RAG |
 | :---------------: | :------: | :----------: | :------: | :----------: |
 | **Qwen2.5-0.5B**  |   0.05   |     0.1      |  *0.17*  |   **0.19**   |
-|  **Qwen2.5-7B**   |   0.80   |   **0.83**   |   0.76   |    *0.81*    |
+|  **Qwen2.5-7B**   |   0.79   |    *0.83*    |   0.82   |   **0.85**   |
 
 
 
