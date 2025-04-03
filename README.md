@@ -5,15 +5,15 @@
 本项目基于 **LangChain** 和 **Elasticsearch** 数据库构建，实现了一套数据检索与推理的完整流程。主要功能包括：
 - **数据存储与索引**：利用 **Elasticsearch** 进行高效文档存储与查询。
 
-- **Embedding 向量检索**：结合本地 **SentenceTransformer** 模型，提高文本匹配精度。
+- **向量检索**：结合本地 **SentenceTransformer** 模型，提高文本匹配精度。
 
-- **重排序（Reranking）**：使用 **CrossEncoder** 模型优化搜索结果排序，提高结果相关性。
+- **重排序**：使用 **CrossEncoder** 模型优化搜索结果排序，提高结果相关性。
 
 - **模型推理**：支持终端命令运行推理任务。
 
 - **流程图**：
 
-  ![rag_workflow](./rag_workflow.png)流程图中的橙色节点代表调用API。运行模型后你可以在 `run.log` 中查看包含对话历史的相关日志。
+  ![rag_workflow](./rag_workflow.png)流程图中的橙色节点代表调用API。运行模型后可以在 `run.log` 中查看包含对话历史的相关日志。
 
 ---
 
@@ -56,7 +56,7 @@ DEEPSEEK_API_KEY=your_deepseek_api_key
 在运行项目前，你需要 **个性化配置** 下面两个文件：
 
 - `start_es.py`：修改 Elasticsearch 配置（密码、证书认证等）。
-- `models.py`：调整本地模型路径，加载你希望使用的 API。
+- `models.py`：调整本地模型路径，或加载远程模型。
 
 ## 🚀 4. 项目使用流程
 
@@ -97,7 +97,9 @@ python run_script.py
 - 本地es检索的 **命中率** 与 **精确率**；
 - **baseline**、**finetune** 以及 **RAG** 的端到端精确率。
 
-注意：由于 DuckDuckGo 的 API 限制，关于 **RAG** 的测试部分仅包含本地es检索，不含网络检索部分！
+注意：由于 DuckDuckGo 的 API 限制，关于 **RAG** 的测试部分仅包含本地 es 检索，不含网络检索部分！
+
+测评数据集来源：[open-compass/LawBench: Benchmarking Legal Knowledge of Large Language Models](https://github.com/open-compass/LawBench/tree/main)
 
 检索结果将以 `json` 和 `csv` 格式存储，可进行后续检查。
 
